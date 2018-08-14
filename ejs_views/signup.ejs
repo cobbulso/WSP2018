@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<style>
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+    }
+    li {
+        float: left;
+    }
+    li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+    }
+
+    li a:hover:not(.active) {
+    background-color: #111;
+    }
+</style>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            
+        <title>Register</title>
+    </head>
+    <body>
+        <nav class="nav">
+            <ul style="width: 100%">
+                <li class="active">
+                    <a href="/">Home</a>
+                </li>
+                <% if (req.isAuthenticated()) { %>
+                    <% if (user.role === "admin") { %>
+                        <li>
+                            <a href="/manageUsers">Manage User</a>
+                        </li>
+                        <li style="float:right">
+                            <a href="/checkout">Cart</a>
+                        </li>
+                        <li style="float:right">
+                            <a href="/logout">Logout</a>
+                        </li>
+                        
+                    <% } else { %>
+                        <li>
+                            <a href="/mypage">My Page</a>
+                        </li>
+                        <li style="float:right">
+                            <a href="/checkout">Cart</a>
+                        </li>	
+                        <li style="float:right">
+                            <a href="/logout">Logout</a>
+                        </li>
+                            
+                    <% } %>			
+                <% } else { %>
+                    <li style="float:right">
+                        <a href="/checkout">Cart</a>
+                    </li>
+                    <li style="float:right">
+                        <a href="/signup">Signup</a>
+                    </li>
+                    <li style="float:right">
+                        <a href="/login">Login</a>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+        <br><br>
+        <div class="jumbotron">
+            <div class="container">
+            <h1 class="display-3">Create a new account</h1>
+            <% if (messages && messages.length > 0) { %>
+                <div class="alert alert-danger" role="alert">
+                    Sign Up Error: <%= messages %>
+                </div>
+            <% } %>
+
+            <form name="signupform" action="/signup" method="post" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <input type="text" name = "role" class="form-control" id="role" placeholder="Choose either admin or registered">
+                </div>     
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" name = "firstName" class="form-control" id="firstName">
+                </div>                 
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" name = "lastName" class="form-control" id="lastName">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" name = "email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="example@uco.edu">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="streetAddress">Street Address</label>
+                    <input type="text" name = "streetAddress" class="form-control" id="streetAddress">
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" name = "city" class="form-control" id="city">
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" name = "state" class="form-control" id="state">
+                </div>
+                <div class="form-group">
+                    <label for="zipCode">Zip Code</label>
+                    <input type="text" name = "zipCode" class="form-control" id="zipCode">
+                </div>
+                <div class="form-group">
+                    <label for="favoriteFood">Favorite Food</label>
+                    <input type="text" name = "favoriteFood" class="form-control" id="favoriteFood">
+                </div>
+                <button type="submit" class="btn btn-primary">Create Account</button>
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            </form>
+            </div> <!-- container -->
+        </div> <!-- jumbotron -->
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>
+    <script>
+        function validateForm() {
+                const firstName = document.forms["signupform"]["firstName"].value;
+                if (firstName.length < 1) {
+                    alert("Enter your first name");
+                    return false;
+                }
+                const lastName = document.forms["signupform"]["lastName"].value;
+                if (lastName.length < 1) {
+                    alert("Enter your last name");
+                    return false;
+                }
+                const email = document.forms["signupform"]["email"].value;
+                if (email.indexOf('@') < 0) {
+                    alert("Enter Proper Email Address");
+                    return false;
+                }
+                const password = document.forms["signupform"]["password"].value;
+                if (password.length < 4) {
+                    alert("password must have at least 4 chars");
+                    return false;
+                }
+                const streetAddress = document.forms["signupform"]["streetAddress"].value;
+                if (streetAddress.length < 1) {
+                    alert("Enter your street address");
+                    return false;
+                }
+                const city = document.forms["signupform"]["city"].value;
+                if (city.length < 1) {
+                    alert("Enter your city");
+                    return false;
+                }
+                const state = document.forms["signupform"]["state"].value;
+                if (state.length < 1) {
+                    alert("Enter your state name");
+                    return false;
+                }
+                const zipCode = document.forms["signupform"]["zipCode"].value;
+                if (zipCode.length < 5) {
+                    alert("Zip-code must be at least 5 digits");
+                    return false;
+                }
+                const favoriteFood = document.forms["signupform"]["favoriteFood"].value;
+                if (favoriteFood.length < 1) {
+                    alert("Enter the name of your favorite food");
+                    return false;
+                }
+                return true;
+            }
+    </script>
+</html>
